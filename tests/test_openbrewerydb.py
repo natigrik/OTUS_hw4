@@ -100,15 +100,8 @@ def test_list_by_query_schema(base_url, query_text):
 
 
 @pytest.mark.parametrize('query_type', ['search', 'autocomplete'])
-def test_list_by_fake_query(base_url, query_type):
+def test_by_fake_query(base_url, query_type):
     res = requests.get(base_url + "/breweries/" + query_type + "?query=faketext")
-    assert res.status_code == 200
-
-    assert len(res.json()) == 0
-
-
-def test_autocomplete_by_fake_query(base_url):
-    res = requests.get(base_url + "/breweries/autocomplete?query=faketext")
     assert res.status_code == 200
 
     assert len(res.json()) == 0
