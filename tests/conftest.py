@@ -1,14 +1,10 @@
 import pytest
 
 
-# addopts = PYTEST_ADDOPTS
-# PYTEST_ADDOPTS = "--url = \"https://dog.ceo\""
-
 def pytest_addoption(parser):
     parser.addoption(
         "--url",
         default="https://ya.ru"
-        # default="https://dog.ceo"
     )
 
     parser.addoption(
