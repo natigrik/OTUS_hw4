@@ -2,13 +2,19 @@ import pytest
 import requests
 from jsonschema import validate
 import random
+from http import HTTPStatus
 
 
-# получение списка данных разного типа
+@pytest.fixture
+def base_url():
+    base_url_local = "https://jsonplaceholder.typicode.com"
+    return base_url_local
+
+
 @pytest.mark.parametrize('date_type', ['posts', 'comments', 'albums', 'photos', 'todos', 'users'])
 def test_list_by_type_schema(base_url, date_type):
-    res = requests.get(base_url + "/" + date_type)
-    assert res.status_code == 200
+    res = requests.get(f"{base_url}/{date_type}")
+    assert res.status_code == HTTPStatus.OK
 
     schema = {
         "type": "array"
@@ -19,8 +25,8 @@ def test_list_by_type_schema(base_url, date_type):
 
 @pytest.mark.parametrize('date_type', ['posts', 'comments', 'albums', 'photos', 'todos', 'users'])
 def test_list_date_count(base_url, date_type):
-    res = requests.get(base_url + "/" + date_type)
-    assert res.status_code == 200
+    res = requests.get(f"{base_url}/{date_type}")
+    assert res.status_code == HTTPStatus.OK
 
     if date_type in ('posts', 'albums'):
         assert len(res.json()) == 100
@@ -35,8 +41,8 @@ def test_list_date_count(base_url, date_type):
 
 
 def test_post_by_id_schema(base_url):
-    res = requests.get(base_url + '/posts/' + str(random.randrange(100) + 1))
-    assert res.status_code == 200
+    res = requests.get(f"{base_url}/posts/{random.randrange(100) + 1}")
+    assert res.status_code == HTTPStatus.OK
 
     schema = {
         "type": "object",
@@ -53,8 +59,8 @@ def test_post_by_id_schema(base_url):
 
 
 def test_post_by_post_id_schema(base_url):
-    res = requests.get(base_url + '/posts/' + str(random.randrange(100) + 1) + '/comments')
-    assert res.status_code == 200
+    res = requests.get(f"{base_url}/posts/{random.randrange(100) + 1}/comments")
+    assert res.status_code == HTTPStatus.OK
 
     schema = {
         "type": "array"
@@ -64,8 +70,8 @@ def test_post_by_post_id_schema(base_url):
 
 
 def test_comments_by_post_id_schema(base_url):
-    res = requests.get(base_url + '/comments?postId=' + str(random.randrange(100) + 1))
-    assert res.status_code == 200
+    res = requests.get(f"{base_url}/comments?postId={random.randrange(100) + 1}")
+    assert res.status_code == HTTPStatus.OK
 
     schema = {
         "type": "array"
@@ -75,20 +81,20 @@ def test_comments_by_post_id_schema(base_url):
 
 
 def test_post(base_url):
-    res = requests.post(base_url + '/posts', data={'title': 'foo', 'body': 'bar', 'userId': 1})
-    assert res.status_code == 201
+    res = requests.post(f"{base_url}/posts", data={'title': 'foo', 'body': 'bar', 'userId': 1})
+    assert res.status_code == HTTPStatus.CREATED
 
 
 def test_put(base_url):
-    res = requests.put(base_url + '/posts/1', data={'id': 1, 'title': 'foo', 'body': 'bar', 'userId': 1})
-    assert res.status_code == 200
+    res = requests.put(f"{base_url}/posts/1", data={'id': 1, 'title': 'foo', 'body': 'bar', 'userId': 1})
+    assert res.status_code == HTTPStatus.OK
 
 
 def test_patch(base_url):
-    res = requests.patch(base_url + '/posts/1', data={'title': 'foo'})
-    assert res.status_code == 200
+    res = requests.patch(f"{base_url}/posts/1", data={'title': 'foo'})
+    assert res.status_code == HTTPStatus.OK
 
 
 def test_delete(base_url):
-    res = requests.delete(base_url + '/posts/1')
-    assert res.status_code == 200
+    res = requests.delete(f"{base_url}/posts/1")
+    assert res.status_code == HTTPStatus.OK
